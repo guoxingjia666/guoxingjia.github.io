@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>My New Hugo Site</title>
+    <link>https://guoxingjia666.github.io/</link>
+    <description>Recent content on My New Hugo Site</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 29 Jul 2020 09:48:50 +0800</lastBuildDate>
+    
+	<atom:link href="https://guoxingjia666.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>MySQL架构及原理详解</title>
+      <link>https://guoxingjia666.github.io/post/blog/</link>
+      <pubDate>Wed, 29 Jul 2020 09:48:50 +0800</pubDate>
+      
+      <guid>https://guoxingjia666.github.io/post/blog/</guid>
+      <description>Mysql的架构可分为两层：Server层和存储引擎层。
+Server层：包含连接器，缓存，分析器，优化器，执行器，包含MySQL大多数核心的功能及内置函数；
+存储引擎层：主要负责数据的存储和提取，是基于插件的形式的架构，支持InnoDB，MyISAM等存储引擎；5.5.5后默认使用InnoDB作为默认的存储引擎。在创建表的时候不指定引擎，默认就是InnoDB，也可以通过engine=memory来指定使用的存储引擎。
+Server层 Server层是MySQL的基础架构，包含了MySQL的大多数核心功能及一些内置的函数。
+连接器 连接器负责与客户端建立连接，获取用户权限，维持和管理连接；
+在经过TCP握手后，就会开始验证用户名和密码，如果密码错误直接结束客户端，如果密码正确，连接器会在权限表中查询用户的权限，此后这个链接中进行的操作都会基于简历链接时读到的权限（也就是说在一个客户端建立了链接后，即使管理员对账号权限进行了修改，也需要这个用户重新链接才会生效）；
+通过show processlist 命令可以查询链接的状态，其中Command列显示的就是链接的状态；如果一个客户端默认超过八个小时没有操作，连接器会将这个链接断开（这个超时时间由wait_timeout参数控制）；
+| Id | User | Host | db | Command | Time | State | Info | | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | | 3 | root | localhost:54957 | test | Query | 0 | starting | ... | 在数据库中长链接指的是在连接成功后如果一个客户端持续有请求，则使用的是同一个连接，短连接是执行几次操作后就断开了连接，下次再操作的时候重新建立连接；因为建立连接的过程是比较复杂的，所以尽量减少频繁创建连接；
+但是全部使用长连接会造成内存长得非常快，因为MySQL执行的过程中临时使用的内存是管理在连接对象中的，这些资源只有在连接器断开的时候释放；如果这些资源长期积累则会出现数据库的OOM，现象上就是MySQL异常重启；解决这个问题可以执行mysql_reset_connection来初始化连接资源，这个操作不需要权限校验，会恢复到刚创建完连接的状态；
+缓存 在执行查询类语句的时候，会先到缓存中查看是否执行过这条语句，之前执行过的语句会以KV的形式存储，K是语句，V是语句的查询结果，如果查询语句命中了缓存，会直接将结果返回到客户端，如果执行的是修改，删除类的语句，则会删除这个表中所有的缓存；在MySQL8.0后删除了缓存这个模块；
+在MySQL8.0之前的版本中也提供了缓存的配置，将query_cache_type 参数设置成DEMAND，这样在执行查询语句的时候都不使用缓存；
+分析器 MySQL在这个阶段需要先做词法分析，来判断出这个命令是做什么的，比如输入的select就会分析出是查询语句，吧表名，查询字段名都分析出来，在识别完上面这些后接下来就要进行语法分析，分析语句是否符合SQL的语法。</description>
+    </item>
+    
+  </channel>
+</rss>
